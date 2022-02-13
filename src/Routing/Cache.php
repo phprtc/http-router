@@ -1,7 +1,7 @@
 <?php
 
 
-namespace QuickRoute\Router;
+namespace RTC\Http\Router\Routing;
 
 use Closure;
 use function Opis\Closure\serialize;
@@ -9,7 +9,7 @@ use function Opis\Closure\unserialize;
 
 /**
  * Class Cache
- * @package QuickRoute\Route
+ * @package RTC\Http\Router\Route
  * @internal for internal use only
  */
 class Cache
@@ -31,7 +31,7 @@ class Cache
                         foreach ($verbRoutes as &$route) {
                             if (
                                 isset($route['handler']) && is_string($route['handler'])
-                                && '__closure__' == substr($route['handler'], 0, 11)
+                                && str_starts_with($route['handler'], '__closure__')
                             ) {
                                 $route['handler'] = unserialize(substr($route['handler'], 11));
                             }

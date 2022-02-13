@@ -1,14 +1,14 @@
 <?php
 
 
-namespace QuickRoute\Router;
+namespace RTC\Http\Router\Routing;
 
 
-use QuickRoute\Route;
+use RTC\Http\Router\Route;
 
 /**
  * Class Getter
- * @package QuickRoute\Route
+ * @package RTC\Http\Router\Route
  * @internal For internal use only
  */
 class Getter
@@ -114,12 +114,6 @@ class Getter
         foreach ($routes as $route) {
             $routeData = $route['route'];
             if (isset($route['route'])) {
-
-                if (isset($parent['middleware'])) {
-                    if (!isset($parent['middleware'])) {
-                        $routeData['middleware'][] = $parent['middleware'];
-                    }
-                }
 
                 $data = $this->constructRouteData($routeData, $parent);
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace QuickRoute\Router;
+namespace RTC\Http\Router\Routing;
 
 use Closure;
 use JsonSerializable;
-use QuickRoute\Route;
-use QuickRoute\RouteInterface;
+use RTC\Contracts\Http\Router\RouteInterface;
+use RTC\Http\Router\Route;
 use ValueError;
 
 class TheRoute implements RouteInterface, JsonSerializable
@@ -30,7 +30,7 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @var mixed Route handler/handler
      */
-    protected $handler;
+    protected mixed $action = null;
 
 
     public function __construct(?TheRoute $parentRoute = null)
@@ -40,55 +40,51 @@ class TheRoute implements RouteInterface, JsonSerializable
         }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function head(string $route, $handler): RouteInterface
+
+    public function head(string $route, callable|array|string $action): static
     {
-        return $this->addRoute('HEAD', $route, $handler);
+        return $this->addRoute('HEAD', $route, $action);
     }
 
     /**
      * Add route
      * @param string $method
      * @param string $route
-     * @param mixed $handlerClass
+     * @param callable|array|string $action
      * @return $this
      */
-    protected function addRoute(string $method, string $route, $handlerClass): RouteInterface
+    protected function addRoute(string $method, string $route, callable|array|string $action): static
     {
         $this->method = $method;
         $this->prefix = $route;
-        $this->handler = $handlerClass;
+        $this->action = $action;
+
         return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function match(array $methods, string $uri, $handler): RouteInterface
+    public function match(array $methods, string $uri, callable|array|string $action): static
     {
         foreach ($methods as $method) {
             $method = strtolower($method);
             $route = new TheRoute($this);
             $route->name(strtolower($method));
             Route::push($route);
-            $route->$method($uri, $handler);
+            $route->$method($uri, $action);
         }
 
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function any(array $paths, string $method, $handler): RouteInterface
+    public function any(array $paths, string $method, callable|array|string $action): static
     {
         foreach ($paths as $path) {
             $method = strtolower($method);
             $route = new TheRoute($this);
             Route::push($route);
-            $route->$method($path, $handler);
+            $route->$method($path, $action);
         }
 
         return $this;
@@ -97,14 +93,14 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function matchAny(array $methods, array $paths, $handler): RouteInterface
+    public function matchAny(array $methods, array $paths, callable|array|string $action): static
     {
         foreach ($methods as $method) {
-            foreach ($paths as $path){
+            foreach ($paths as $path) {
                 $method = strtolower($method);
                 $route = new TheRoute($this);
                 Route::push($route);
-                $route->$method($path, $handler);
+                $route->$method($path, $action);
             }
         }
 
@@ -118,8 +114,8 @@ class TheRoute implements RouteInterface, JsonSerializable
         string $uri,
         string $controller,
         string $idParameterName = 'id',
-        bool $integerId = true
-    ): RouteInterface
+        bool   $integerId = true
+    ): static
     {
         $idParam = $integerId
             ? '{' . "$idParameterName:[0-9]+" . '}'
@@ -171,47 +167,47 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function get(string $route, $handler): RouteInterface
+    public function get(string $route, callable|array|string $action): static
     {
-        return $this->addRoute('GET', $route, $handler);
+        return $this->addRoute('GET', $route, $action);
     }
 
     /**
      * @inheritDoc
      */
-    public function post(string $route, $handler): RouteInterface
+    public function post(string $route, callable|array|string $action): static
     {
-        return $this->addRoute('POST', $route, $handler);
+        return $this->addRoute('POST', $route, $action);
     }
 
     /**
      * @inheritDoc
      */
-    public function put(string $route, $handler): RouteInterface
+    public function put(string $route, callable|array|string $action): static
     {
-        return $this->addRoute('PUT', $route, $handler);
+        return $this->addRoute('PUT', $route, $action);
     }
 
     /**
      * @inheritDoc
      */
-    public function patch(string $route, $handler): RouteInterface
+    public function patch(string $route, callable|array|string $action): static
     {
-        return $this->addRoute('PATCH', $route, $handler);
+        return $this->addRoute('PATCH', $route, $action);
     }
 
     /**
      * @inheritDoc
      */
-    public function delete(string $route, $handler): RouteInterface
+    public function delete(string $route, callable|array|string $action): static
     {
-        return $this->addRoute('DELETE', $route, $handler);
+        return $this->addRoute('DELETE', $route, $action);
     }
 
     /**
      * @inheritDoc
      */
-    public function prefix(string $prefix): RouteInterface
+    public function prefix(string $prefix): static
     {
         $this->prefix = $prefix;
         return $this;
@@ -220,7 +216,7 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function append(string $prefix): RouteInterface
+    public function append(string $prefix): static
     {
         $this->append = $prefix;
         return $this;
@@ -229,7 +225,7 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function prepend(string $prefix): RouteInterface
+    public function prepend(string $prefix): static
     {
         $this->prepend = $prefix;
         return $this;
@@ -238,7 +234,7 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function group(Closure $closure): RouteInterface
+    public function group(Closure $closure): static
     {
         $this->group = $closure;
         return $this;
@@ -247,7 +243,7 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function namespace(string $namespace): RouteInterface
+    public function namespace(string $namespace): static
     {
         if ($namespace[strlen($namespace) - 1] !== "\\") {
             $namespace .= "\\";
@@ -259,7 +255,7 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function name(string $name): RouteInterface
+    public function name(string $name): static
     {
         $this->name = $name;
         return $this;
@@ -268,8 +264,13 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function middleware(string $middleware): RouteInterface
+    public function middleware(array|string $middleware): static
     {
+        if (is_array($middleware)) {
+            $this->middlewares = array_merge($this->middlewares, $middleware);
+            return $this;
+        }
+
         $this->middlewares[] = $middleware;
         return $this;
     }
@@ -277,7 +278,7 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function addField(string $name, $value): RouteInterface
+    public function addField(string $name, mixed $value): static
     {
         $this->fields[$name] = $value;
         return $this;
@@ -286,7 +287,7 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function where($parameter, ?string $regExp = null): RouteInterface
+    public function where(array|string $parameter, ?string $regExp = null): static
     {
         if (is_array($parameter)) {
             $this->parameterTypes['regExp'] = array_merge($this->parameterTypes['regExp'], $parameter);
@@ -303,27 +304,27 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function whereNumber(string $param): RouteInterface
+    public function whereNumber(string $param): static
     {
-        array_push($this->parameterTypes['number'], $param);
+        $this->parameterTypes['number'][] = $param;
         return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function whereAlpha(string $param): RouteInterface
+    public function whereAlpha(string $param): static
     {
-        array_push($this->parameterTypes['alpha'], $param);
+        $this->parameterTypes['alpha'][] = $param;
         return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function whereAlphaNumeric(string $param): RouteInterface
+    public function whereAlphaNumeric(string $param): static
     {
-        array_push($this->parameterTypes['alphanumeric'], $param);
+        $this->parameterTypes['alphanumeric'][] = $param;
         return $this;
     }
 
@@ -342,7 +343,7 @@ class TheRoute implements RouteInterface, JsonSerializable
         $routeData = [
             'prefix' => $this->prefix,
             'namespace' => $this->namespace,
-            'handler' => $this->handler,
+            'handler' => $this->action,
             'middleware' => $this->middlewares,
             'method' => $this->method,
             'name' => $this->name,
@@ -363,7 +364,7 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function onRegister(): RouteInterface
+    public function onRegister(): static
     {
         if (substr($this->prefix, 0, 1) != Getter::getDelimiter()) {
             $this->prefix = Getter::getDelimiter() . $this->prefix;

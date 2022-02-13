@@ -1,16 +1,16 @@
 <?php
 
-namespace QuickRoute\Tests;
+namespace RTC\Http\Route\Tests;
 
-use QuickRoute\Route;
+use RTC\Http\Router\Route;
 
-if (!function_exists('QuickRoute\Tests\printer')) {
+if (!function_exists('RTC\Http\Route\Tests\printer')) {
     function printer(): void
     {
         //dummy
     }
 }
 
-Route::post('user/save', 'QuickRoute\Tests\printer')->name('creator');
-Route::patch('user/patch', 'QuickRoute\Tests\printer');
-Route::delete('user', 'QuickRoute\Tests\printer');
+Route::post('user/save', 'RTC\Http\Route\Tests\printer')->name('creator');
+Route::patch('user/patch', 'RTC\Http\Route\Tests\printer');
+Route::delete('user', 'RTC\Http\Route\Tests\printer');

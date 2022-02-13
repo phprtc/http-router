@@ -1,29 +1,31 @@
 <?php
 
 
-namespace QuickRoute\Router;
+namespace RTC\Http\Router;
 
-use FastRoute\Dispatcher as FastDispatcher;
+use FastRoute\Dispatcher as FastRouteDispatcher;
 use FastRoute\Dispatcher\GroupCountBased;
+use JetBrains\PhpStorm\Pure;
+use RTC\Contracts\Http\Router\CollectorInterface;
+use RTC\Http\Router\Routing\DispatchResult;
+use RTC\Http\Router\Routing\Getter;
 
 class Dispatcher
 {
     private string $dispatcher;
 
-    private Collector $collector;
 
-    public function __construct(Collector $collector)
+    public function __construct(private CollectorInterface $collector)
     {
-        $this->collector = $collector;
     }
 
     /**
      * Collect routes defined above or in included file
      *
      * @param array $routesInfo
-     * @return Dispatcher
+     * @return static
      */
-    public static function collectRoutes(array $routesInfo = []): Dispatcher
+    public static function collectRoutes(array $routesInfo = []): static
     {
         return self::create(Collector::create()->collect($routesInfo));
     }
@@ -31,12 +33,12 @@ class Dispatcher
     /**
      * Creates dispatcher instance
      *
-     * @param Collector $collector
-     * @return Dispatcher
+     * @param CollectorInterface $collector
+     * @return static
      */
-    public static function create(Collector $collector): Dispatcher
+    #[Pure] public static function create(CollectorInterface $collector): static
     {
-        return new self($collector);
+        return new static($collector);
     }
 
     /**
@@ -44,9 +46,9 @@ class Dispatcher
      *
      * @param string $filePath
      * @param array $routesInfo
-     * @return Dispatcher
+     * @return static
      */
-    public static function collectRoutesFile(string $filePath, array $routesInfo = []): Dispatcher
+    public static function collectRoutesFile(string $filePath, array $routesInfo = []): static
     {
         return self::create(Collector::create()->collectFile($filePath, $routesInfo));
     }
@@ -90,9 +92,9 @@ class Dispatcher
     }
 
     /**
-     * @return FastDispatcher
+     * @return FastRouteDispatcher
      */
-    private function createDispatcher(): FastDispatcher
+    private function createDispatcher(): FastRouteDispatcher
     {
         if (!isset($this->dispatcher)) {
             $this->dispatcher = GroupCountBased::class;
@@ -106,15 +108,16 @@ class Dispatcher
         $dispatcher = $this->dispatcher;
         $routeData = $this->collector->getFastRouteData();
 
+        /**@phpstan-ignore-next-line**/
         return (new $dispatcher($routeData));
     }
 
     /**
      * Set your own dispatcher
      * @param string $dispatcher A class namespace implementing \FastRoute\Dispatcher
-     * @return Dispatcher
+     * @return static
      */
-    public function setDispatcher(string $dispatcher): Dispatcher
+    public function setDispatcher(string $dispatcher): static
     {
         $this->dispatcher = $dispatcher;
         return $this;

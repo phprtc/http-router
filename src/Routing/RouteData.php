@@ -1,10 +1,11 @@
 <?php
 
-namespace QuickRoute\Router;
+namespace RTC\Http\Router\Routing;
 
-use JsonSerializable;
+use JetBrains\PhpStorm\Pure;
+use RTC\Contracts\Http\Router\RouteDataInterface;
 
-class RouteData implements JsonSerializable
+class RouteData implements RouteDataInterface
 {
     protected array $routeData;
 
@@ -80,9 +81,9 @@ class RouteData implements JsonSerializable
     /**
      * Get route handler
      *
-     * @return mixed|null
+     * @return mixed
      */
-    public function getHandler()
+    public function getHandler(): mixed
     {
         return $this->routeData['handler'] ?? null;
     }
@@ -92,7 +93,7 @@ class RouteData implements JsonSerializable
      *
      * @return mixed|null
      */
-    public function getController()
+    public function getController(): mixed
     {
         return $this->routeData['handler'] ?? null;
     }
@@ -119,7 +120,7 @@ class RouteData implements JsonSerializable
     /**
      * @inheritDoc
      */
-    public function jsonSerialize(): array
+    #[Pure] public function jsonSerialize(): array
     {
         return $this->getData();
     }

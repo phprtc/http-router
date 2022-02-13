@@ -1,15 +1,19 @@
 <?php
 
 
-namespace QuickRoute\Router;
+namespace RTC\Http\Router;
 
 use FastRoute\DataGenerator\GroupCountBased;
 use FastRoute\RouteCollector as FastRouteCollector;
 use FastRoute\RouteParser\Std;
 use InvalidArgumentException;
-use QuickRoute\Route;
+use JetBrains\PhpStorm\Pure;
+use RTC\Contracts\Http\Router\CollectorInterface;
+use RTC\Http\Router\Routing\Cache;
+use RTC\Http\Router\Routing\Getter;
+use RTC\Http\Router\Routing\RouteData;
 
-class Collector
+class Collector implements CollectorInterface
 {
     private FastRouteCollector $collector;
 
@@ -56,7 +60,7 @@ class Collector
     private array $fastRouteData = [];
 
     /**
-     * An indicator whether cache will collected
+     * An indicator whether cache will be collected
      * This is important as to not re-collect routes by calling different methods that invoke doCollectRoute() method
      *
      * @var bool $willCollect
@@ -81,11 +85,11 @@ class Collector
     /**
      * Create an instance of collector
      *
-     * @return Collector
+     * @return static
      */
-    public static function create(): self
+    #[Pure] public static function create(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
@@ -93,9 +97,9 @@ class Collector
      *
      * @param string $filePath
      * @param array $routesInfo
-     * @return Collector
+     * @return static
      */
-    public function collectFile(string $filePath, array $routesInfo = []): Collector
+    public function collectFile(string $filePath, array $routesInfo = []): static
     {
         $this->willCollect = true;
         $this->collectableRoutes[] = [
@@ -110,9 +114,9 @@ class Collector
      * Collect routes defined above or in included file
      *
      * @param array $routesInfo
-     * @return Collector
+     * @return static
      */
-    public function collect(array $routesInfo = []): Collector
+    public function collect(array $routesInfo = []): static
     {
         $this->willCollect = true;
         $this->collectableRoutes[] = [
@@ -130,7 +134,7 @@ class Collector
      * This will tell caching lib to not look closures.
      * @return $this
      */
-    public function cache(string $cacheFile, bool $hasClosures = false): self
+    public function cache(string $cacheFile, bool $hasClosures = false): static
     {
         $this->cacheFile = $cacheFile;
         $this->routesHasClosures = $hasClosures;
@@ -144,7 +148,7 @@ class Collector
      * @param string $delimiter
      * @return $this
      */
-    public function prefixDelimiter(string $delimiter): self
+    public function prefixDelimiter(string $delimiter): static
     {
         $this->delimiter = $delimiter;
         return $this;
@@ -155,7 +159,7 @@ class Collector
      *
      * @return $this
      */
-    public function register(): self
+    public function register(): static
     {
         $this->doCollectRoutes();
         $rootFastCollector = $this->getFastRouteCollector(true);
@@ -172,7 +176,7 @@ class Collector
 
         $this->fastRouteData = $rootFastCollector->getData();
 
-        if (empty($this->cachedRoutes) && '' != $this->cacheFile) {
+        if ('' != $this->cacheFile) {
             Cache::create($this->cacheFile, $this->fastRouteData);
         }
 
@@ -312,7 +316,7 @@ class Collector
         $foundRoute = $this->route($routeName);
         if (!$foundRoute) return null;
 
-        $prefix = $foundRoute->getPrefix() ?? null;
+        $prefix = $foundRoute->getPrefix();
         if (!$prefix) return null;
 
         return $this->replaceParamWithValue($prefix, $routeParams);

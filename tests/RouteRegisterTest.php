@@ -1,14 +1,14 @@
 <?php
 
 
-namespace QuickRoute\Tests;
+namespace RTC\Http\Router\Tests;
 
 
 use PHPUnit\Framework\TestCase;
-use QuickRoute\Route;
-use QuickRoute\Router\Collector;
-use QuickRoute\Router\Dispatcher;
-use QuickRoute\Router\Getter;
+use RTC\Http\Router\Collector;
+use RTC\Http\Router\Dispatcher;
+use RTC\Http\Router\Route;
+use RTC\Http\Router\Routing\Getter;
 
 class RouteRegisterTest extends TestCase
 {
@@ -67,7 +67,7 @@ class RouteRegisterTest extends TestCase
             ->group(function () {
                 Route::get('middle', fn() => time());
                 Route::prefix('inner')->group(function () {
-                    Route::get('route', fn() => printer());
+                    Route::get('route', fn() => print 'hello');
                 });
             });
 
@@ -236,6 +236,25 @@ class RouteRegisterTest extends TestCase
         self::assertSame(['admin', 'user'], $result2->getRoute()->getMiddleware());
     }
 
+    public function testArrayOfMiddlewares(): void
+    {
+        Route::restart();
+        Route::get('/', fn() => print time())->middleware('only');
+        Route::prefix('/admin')
+            ->middleware(['admin', 'super'])
+            ->group(function () {
+                Route::prefix('user')->group(function () {
+                    Route::get('/', fn() => print time())->middleware(['user', 'anonymous']);
+                });
+            });
+
+        $collector = Collector::create()->collect();
+        $result1 = Dispatcher::create($collector)->dispatch('get', '/');
+        $result2 = Dispatcher::create($collector)->dispatch('get', '/admin/user');
+        self::assertSame(['only'], $result1->getRoute()->getMiddleware());
+        self::assertSame(['admin', 'super', 'user', 'anonymous'], $result2->getRoute()->getMiddleware());
+    }
+
     public function testResource(): void
     {
         $this->resourceTester();
@@ -249,7 +268,7 @@ class RouteRegisterTest extends TestCase
             ->name('user.')
             ->group(function () use ($idParamName, $integerParam, &$idParam) {
                 $idParam = $integerParam ? '{' . $idParamName . ':[0-9]+}' : '{' . $idParamName . '}';
-                Route::resource('photos', 'App\Http\Controller\PhotoController', $idParamName, $integerParam);
+                Route::resource('photos', self::class, $idParamName, $integerParam);
             });
 
 
@@ -294,8 +313,9 @@ class RouteRegisterTest extends TestCase
 
     public function testMatchAny(): void
     {
+        $action = fn() => print 'hello';
         Route::restart();
-        Route::matchAny(['get', 'post'], ['/customer/login', '/admin/login'], 'MainController@index');
+        Route::matchAny(['get', 'post'], ['/customer/login', '/admin/login'], $action);
         $routes = Collector::create()->collect()->getCollectedRoutes();
 
         self::assertSame('GET', $routes[0]['method']);
@@ -310,9 +330,10 @@ class RouteRegisterTest extends TestCase
 
     public function testControllerMethod(): void
     {
-        Route::get('/', [1, 3]);
+        $action = fn() => print 'hello';
+        Route::get('/', $action);
         $result = Dispatcher::collectRoutes()->dispatch('GET', '/');
-        self::assertSame([1, 3], $result->getRoute()->getController());
+        self::assertSame($action, $result->getRoute()->getController());
     }
 
     protected function setUp(): void

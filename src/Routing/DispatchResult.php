@@ -1,27 +1,30 @@
 <?php
 
 
-namespace QuickRoute\Router;
+namespace RTC\Http\Router\Routing;
 
 
 use FastRoute\Dispatcher as FastDispatcher;
+use JetBrains\PhpStorm\Pure;
+use RTC\Contracts\Http\Router\CollectorInterface;
+use RTC\Contracts\Http\Router\DispatchResultInterface;
 
-class DispatchResult
+class DispatchResult implements DispatchResultInterface
 {
     /**
      * @var array
      */
     private array $dispatchResult;
 
-    private Collector $collector;
+    private CollectorInterface $collector;
 
     /**
      * DispatchResult constructor.
      *
      * @param string[] $dispatchResult
-     * @param Collector $collector
+     * @param CollectorInterface $collector
      */
-    public function __construct(array $dispatchResult, Collector $collector)
+    public function __construct(array $dispatchResult, CollectorInterface $collector)
     {
         $this->dispatchResult = $dispatchResult;
         $this->collector = $collector;
@@ -62,7 +65,7 @@ class DispatchResult
      * Get dispatched url parameters
      * @return array|null
      */
-    public function getUrlParameters(): ?array
+    public function getUrlParameters(): array|null
     {
         return $this->dispatchResult[2] ?? null;
     }
@@ -70,9 +73,9 @@ class DispatchResult
     /**
      * Get all collected routes
      *
-     * @return Collector
+     * @return CollectorInterface
      */
-    public function getCollector(): Collector
+    public function getCollector(): CollectorInterface
     {
         return $this->collector;
     }
@@ -82,7 +85,7 @@ class DispatchResult
      *
      * @return RouteData
      */
-    public function getRoute(): RouteData
+    #[Pure] public function getRoute(): RouteData
     {
         return new RouteData($this->dispatchResult[1] ?? []);
     }

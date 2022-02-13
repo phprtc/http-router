@@ -1,9 +1,9 @@
 <?php
 
-namespace QuickRoute\Tests;
+namespace RTC\Http\Route\Tests;
 
-use QuickRoute\Route;
+use RTC\Http\Router\Route;
 
-Route::post('admin/save', 'QuickRoute\Tests\printer')->name('creator');
-Route::patch('admin/patch', 'QuickRoute\Tests\printer');
-Route::delete('admin', 'QuickRoute\Tests\printer');
+Route::post('admin/save', 'RTC\Http\Route\Tests\printer')->name('creator');
+Route::patch('admin/patch', 'RTC\Http\Route\Tests\printer');
+Route::delete('admin', 'RTC\Http\Route\Tests\printer');

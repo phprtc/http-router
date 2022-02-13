@@ -10,7 +10,7 @@
                             'prepend' => '',
                             'namespace' => '',
                             'name' => 'creator',
-                            'handler' => 'QuickRoute\\Tests\\printer',
+                            'handler' => 'RTC\Http\Route\\Tests\\printer',
                             'method' => 'POST',
                             'middleware' => '',
                             'fields' =>
@@ -26,7 +26,7 @@
                             'prepend' => '',
                             'namespace' => '',
                             'name' => '',
-                            'handler' => 'QuickRoute\\Tests\\printer',
+                            'handler' => 'RTC\Http\Route\\Tests\\printer',
                             'method' => 'PATCH',
                             'middleware' => '',
                             'fields' =>
@@ -42,7 +42,7 @@
                             'prepend' => '',
                             'namespace' => '',
                             'name' => '',
-                            'handler' => 'QuickRoute\\Tests\\printer',
+                            'handler' => 'RTC\Http\Route\\Tests\\printer',
                             'method' => 'DELETE',
                             'middleware' => '',
                             'fields' =>

@@ -1,22 +1,23 @@
 <?php
 
 
-namespace QuickRoute\Tests;
+namespace RTC\Http\Router\Tests;
 
 
-use QuickRoute\RouteInterface;
-use QuickRoute\Router\TheRoute;
+use JetBrains\PhpStorm\Pure;
+use RTC\Http\Router\Routing\TheRoute;
 
 class TheRouteFactory extends TheRoute
 {
     private bool $enableOnRegisterEvent;
 
-    public function __construct(bool $enableOnRegisterEvent = false)
+    #[Pure] public function __construct(bool $enableOnRegisterEvent = false)
     {
+        parent::__construct();
         $this->enableOnRegisterEvent = $enableOnRegisterEvent;
     }
 
-    public function onRegister(): RouteInterface
+    public function onRegister(): static
     {
         if ($this->enableOnRegisterEvent) {
             return parent::onRegister();

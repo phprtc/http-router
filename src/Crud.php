@@ -1,10 +1,11 @@
 <?php
 
 
-namespace QuickRoute;
+namespace RTC\Http\Router;
 
 
-use QuickRoute\Router\TheRoute;
+use JetBrains\PhpStorm\Pure;
+use RTC\Http\Router\Routing\TheRoute;
 
 class Crud
 {
@@ -17,12 +18,12 @@ class Crud
     protected array $disabledRoutes = [];
 
 
-    public static function create(
+    #[Pure] public static function create(
         string $uri,
         string $controller
-    ): Crud
+    ): static
     {
-        return new self($uri, $controller);
+        return new static($uri, $controller);
     }
 
     public function __construct(
@@ -39,9 +40,9 @@ class Crud
      *
      * @param string $name parameter name
      * @param string|null $regExp regular expression
-     * @return $this
+     * @return static
      */
-    public function parameter(string $name, ?string $regExp = null): Crud
+    public function parameter(string $name, ?string $regExp = null): static
     {
         $this->parameterName = $name;
 
@@ -56,9 +57,9 @@ class Crud
      * Mark parameter as of numeric type
      *
      * @param string $name parameter name
-     * @return $this
+     * @return static
      */
-    public function numericParameter(string $name = 'id'): Crud
+    public function numericParameter(string $name = 'id'): static
     {
         return $this->parameter($name, ':[0-9]+');
     }
@@ -67,9 +68,9 @@ class Crud
      * Mark parameter as of alphanumeric type
      *
      * @param string $name
-     * @return $this
+     * @return static
      */
-    public function alphabeticParameter(string $name = 'id'): Crud
+    public function alphabeticParameter(string $name = 'id'): static
     {
         return $this->parameter($name, ':[a-zA-Z]+');
     }
@@ -78,9 +79,9 @@ class Crud
      * Mark parameter as of alphanumeric type
      *
      * @param string $name
-     * @return $this
+     * @return static
      */
-    public function alphaNumericParameter(string $name = 'id'): Crud
+    public function alphaNumericParameter(string $name = 'id'): static
     {
         return $this->parameter($name, ':[a-zA-Z]+');
     }
@@ -138,31 +139,31 @@ class Crud
     /**
      * This will prevent the get all route from generating
      *
-     * @return $this
+     * @return static
      */
-    public function disableIndexRoute(): Crud
+    public function disableIndexRoute(): static
     {
         $this->disabledRoutes[] = 'index';
         return $this;
     }
 
     /**
-     * This will prevent the create route from generating
+     * This will prevent the "create" route from generating
      *
-     * @return $this
+     * @return static
      */
-    public function disableStoreRoute(): Crud
+    public function disableStoreRoute(): static
     {
         $this->disabledRoutes[] = 'store';
         return $this;
     }
 
     /**
-     * This will prevent the destroy all route from generating
+     * This will prevent the "destroy all" route from generating
      *
-     * @return $this
+     * @return static
      */
-    public function disableDestroyAllRoute(): Crud
+    public function disableDestroyAllRoute(): static
     {
         $this->disabledRoutes[] = 'destroy_all';
         return $this;
@@ -171,9 +172,9 @@ class Crud
     /**
      * This will prevent the get one route from generating
      *
-     * @return $this
+     * @return static
      */
-    public function disableShowRoute(): Crud
+    public function disableShowRoute(): static
     {
         $this->disabledRoutes[] = 'show';
         return $this;
@@ -182,20 +183,20 @@ class Crud
     /**
      * This will prevent the update route from generating
      *
-     * @return $this
+     * @return static
      */
-    public function disableUpdateRoute(): Crud
+    public function disableUpdateRoute(): static
     {
         $this->disabledRoutes[] = 'update';
         return $this;
     }
 
     /**
-     * This will prevent the delete one route from generating
+     * This will prevent the "delete" route from generating
      *
-     * @return $this
+     * @return static
      */
-    public function disableDestroyRoute(): Crud
+    public function disableDestroyRoute(): static
     {
         $this->disabledRoutes[] = 'destroy';
         return $this;

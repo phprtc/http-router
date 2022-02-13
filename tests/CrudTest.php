@@ -1,11 +1,11 @@
 <?php
 
-namespace QuickRoute\Tests;
+namespace RTC\Http\Router\Tests;
 
-use QuickRoute\Crud;
+use RTC\Http\Router\Crud;
 use PHPUnit\Framework\TestCase;
-use QuickRoute\Route;
-use QuickRoute\Router\Collector;
+use RTC\Http\Router\Route;
+use RTC\Http\Router\Collector;
 
 class CrudTest extends TestCase
 {

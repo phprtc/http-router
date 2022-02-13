@@ -1,10 +1,10 @@
 <?php
 
-namespace QuickRoute\Tests;
+namespace RTC\Http\Route\Tests;
 
 use PHPUnit\Framework\TestCase;
-use QuickRoute\Route;
-use QuickRoute\Router\Getter;
+use RTC\Http\Router\Route;
+use RTC\Http\Router\Routing\Getter;
 
 class DelimiterTest extends TestCase
 {

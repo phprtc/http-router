@@ -1,14 +1,14 @@
 <?php
 
 
-namespace QuickRoute\Tests;
+namespace RTC\Http\Router\Tests;
 
 
 use FastRoute\Dispatcher\CharCountBased;
 use PHPUnit\Framework\TestCase;
-use QuickRoute\Route;
-use QuickRoute\Router\Collector;
-use QuickRoute\Router\Dispatcher;
+use RTC\Http\Router\Route;
+use RTC\Http\Router\Collector;
+use RTC\Http\Router\Dispatcher;
 
 class DispatcherTest extends TestCase
 {

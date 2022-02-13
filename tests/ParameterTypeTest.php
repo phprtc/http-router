@@ -1,10 +1,10 @@
 <?php
 
-namespace QuickRoute\Tests;
+namespace RTC\Http\Router\Tests;
 
 use PHPUnit\Framework\TestCase;
-use QuickRoute\Route;
-use QuickRoute\Router\Collector;
+use RTC\Http\Router\Route;
+use RTC\Http\Router\Collector;
 
 use function PHPUnit\Framework\assertSame;
 use function PHPUnit\Framework\assertTrue;
